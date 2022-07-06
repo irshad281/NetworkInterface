@@ -34,8 +34,6 @@ enum AuthRequest: Request {
         }
     }
     
-    var version: APIVersion { .v1 }
-    
     var baseURLString: String { App.url }
     
     var endPoint: String {
