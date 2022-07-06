@@ -84,3 +84,27 @@ struct AuthService {
     }
 }
 ```
+
+## Chain your multiple services into single service becomes super easy.
+
+```swift
+let service1 = UserService.getUserDetails()
+let service2 = UserService.getUserFeed()
+let service3 = UserService.getUserArticles()
+
+let services = Publishers.Zip(service1, service2, service3)
+        
+services.sink { state in
+    switch state {
+    case .finished:
+        // Task is finished.
+    case .failure(let error):
+        print(error)
+    }
+} receiveValue: { result1, result2, result3 in
+    // result1 = response of service1
+    // result2 = response of service2
+    // result3 = response of service3
+    // do your stuff with the response here.
+}.store(in: &cancellables)
+```
