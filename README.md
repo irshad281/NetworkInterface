@@ -3,7 +3,7 @@ It's a advance NetworkInterface to execute your web services, it developed over 
 
 # Installation
 ## Swift Package Manager
-Go to `File | Swift Packages | Add Package Dependency...` in Xcode and search for "UtilityPackage".
+Go to `File | Swift Packages | Add Package Dependency...` in Xcode and search for "NetworkInterface".
 ```swift
 let package = Package(
     dependencies: [
