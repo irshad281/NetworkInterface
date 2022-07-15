@@ -11,6 +11,12 @@ let package = Package(
     ],
 )
 ```
+
+## Enable/Disable Networks logs
+```swift
+NetworkInterface.enableNetworkLogs(true)
+````
+
 ## Request
 You make make seperate request for your modules like this.
 ```swift
