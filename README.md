@@ -3,7 +3,7 @@ It's a advance NetworkInterface to execute your web services, it developed over 
 
 # Installation
 ## Swift Package Manager
-Go to `File | Swift Packages | Add Package Dependency...` in Xcode and search for "UtilityPackage".
+Go to `File | Swift Packages | Add Package Dependency...` in Xcode and search for "NetworkInterface".
 ```swift
 let package = Package(
     dependencies: [
@@ -11,6 +11,12 @@ let package = Package(
     ],
 )
 ```
+
+## Enable/Disable Networks logs
+```swift
+NetworkInterface.enableNetworkLogs(true)
+````
+
 ## Request
 You make make seperate request for your modules like this.
 ```swift
@@ -83,4 +89,28 @@ struct AuthService {
         NetworkManager.performRequest(NewsRequest.userDetail(id: id))
     }
 }
+```
+
+## Chain your multiple services into single service becomes super easy.
+
+```swift
+let service1 = UserService.getUserDetails()
+let service2 = UserService.getUserFeed()
+let service3 = UserService.getUserArticles()
+
+let services = Publishers.Zip(service1, service2, service3)
+        
+services.sink { state in
+    switch state {
+    case .finished:
+        // Task is finished.
+    case .failure(let error):
+        print(error)
+    }
+} receiveValue: { result1, result2, result3 in
+    // result1 = response of service1
+    // result2 = response of service2
+    // result3 = response of service3
+    // do your stuff with the response here.
+}.store(in: &cancellables)
 ```
