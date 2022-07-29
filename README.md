@@ -22,53 +22,25 @@ You make make seperate request for your modules like this.
 ```swift
 enum AuthRequest: Request {
     
-    // MARK: - AuthRequest Request -
+    // MARK: - Request
     case login(model: LoginParams)
-    case signup(model: SignupParams)
-    case userDetail(id: Int)
-    case userArticles(id: Int)
-    case search(q: String, size: Int, page: Int)
     
     // MARK: -
     var method: HTTPMethod {
-        switch self {
-        case .userDetail, .userArticles, .search:
-            return .get
-            
-        default:
-            return .post
-        }
+        .post
     }
     
     var baseURLString: String { App.url }
     
     var endPoint: String {
-        switch self {
-        case .login:
-            return "/login"
-        case .signup:
-            return "/signup"
-        case .userDetail(let id):
-            return "/users/\(id)"
-        case .search(let query, let size, let page):
-            return "/news/search?q=\(query)&size=\(size)&page=\(page)"
-        case .userArticles(let id):
-            return "/users/article/\(id)"
-        }
+        return "/login"
     }
     
     func body() throws -> Data? {
-        switch self {
-        case .login(let params):
-            return try? params.asRequestBody()
-        case .signup(let params):
-            return try? params.asRequestBody()
-        case .search, .detail, .relatedArticles:
-            return nil
-        }
+        try? params.asRequestBody()
     }
     
-    func headers() -> Headers { App.shared.headers }
+    func headers() -> Headers { App.headers }
         
 }
 ```
@@ -79,14 +51,6 @@ After creating your `request`, you can make your `service` implementation like t
 struct AuthService {
     static func loginWith(params: LoginParams) -> Future<LoginModel, RequestError> {
         NetworkManager.performRequest(AuthRequest.login(model: params))
-    }
-    
-    static func signupWith(params: SignupParams) -> Future<SignupModel, RequestError> {
-        NetworkManager.performRequest(NewsRequest.signup(model: params))
-    }
-    
-    static func getUserDetailsWith(id: Int) -> Future<UserDetailModel, RequestError> {
-        NetworkManager.performRequest(NewsRequest.userDetail(id: id))
     }
 }
 ```
