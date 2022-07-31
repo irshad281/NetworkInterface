@@ -12,13 +12,15 @@ let package = Package(
 )
 ```
 
-## Enable/Disable Networks logs
+# Enable/Disable Networks logs
+
 ```swift
 NetworkInterface.enableNetworkLogs(true)
 ````
 
-## Request
-You make make seperate request for your modules like this.
+# Request
+Define your request route by confirming to `Request` protocol below is an example.
+
 ```swift
 enum AuthRequest: Request {
     
@@ -44,8 +46,9 @@ enum AuthRequest: Request {
         
 }
 ```
+# Service Layer
 
-After creating your `request`, you can make your `service` implementation like this 
+After defininig your `Request`, create your seperate `Service Layer` like this.
 
 ```swift
 struct AuthService {
@@ -55,7 +58,8 @@ struct AuthService {
 }
 ```
 
-## Chain your multiple services into single service becomes super easy.
+# Service Chaining 
+Chain your multiple `Services` into single service becomes super easy by using `NetworkInterface`
 
 ```swift
 let service1 = UserService.getUserDetails()
