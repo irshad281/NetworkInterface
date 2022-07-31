@@ -82,3 +82,6 @@ services.sink { state in
     // do your stuff with the response here.
 }.store(in: &cancellables)
 ```
+
+# Example App 
+Checkout the sample code from [Example App](https://github.com/irshad281/ExampleApp)
