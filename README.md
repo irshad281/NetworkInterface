@@ -12,86 +12,54 @@ let package = Package(
 )
 ```
 
-## Enable/Disable Networks logs
+# Enable/Disable Networks logs
+
 ```swift
 NetworkInterface.enableNetworkLogs(true)
 ````
 
-## Request
-You make make seperate request for your modules like this.
+# Request
+Define your request route by confirming to `Request` protocol below is an example.
+
 ```swift
 enum AuthRequest: Request {
     
-    // MARK: - AuthRequest Request -
+    // MARK: - Request
     case login(model: LoginParams)
-    case signup(model: SignupParams)
-    case userDetail(id: Int)
-    case userArticles(id: Int)
-    case search(q: String, size: Int, page: Int)
     
     // MARK: -
     var method: HTTPMethod {
-        switch self {
-        case .userDetail, .userArticles, .search:
-            return .get
-            
-        default:
-            return .post
-        }
+        .post
     }
     
     var baseURLString: String { App.url }
     
     var endPoint: String {
-        switch self {
-        case .login:
-            return "/login"
-        case .signup:
-            return "/signup"
-        case .userDetail(let id):
-            return "/users/\(id)"
-        case .search(let query, let size, let page):
-            return "/news/search?q=\(query)&size=\(size)&page=\(page)"
-        case .userArticles(let id):
-            return "/users/article/\(id)"
-        }
+        return "/login"
     }
     
     func body() throws -> Data? {
-        switch self {
-        case .login(let params):
-            return try? params.asRequestBody()
-        case .signup(let params):
-            return try? params.asRequestBody()
-        case .search, .detail, .relatedArticles:
-            return nil
-        }
+        try? params.asRequestBody()
     }
     
-    func headers() -> Headers { App.shared.headers }
+    func headers() -> Headers { App.headers }
         
 }
 ```
+# Service Layer
 
-After creating your `request`, you can make your `service` implementation like this 
+After defininig your `Request`, create your seperate `Service Layer` like this.
 
 ```swift
 struct AuthService {
     static func loginWith(params: LoginParams) -> Future<LoginModel, RequestError> {
         NetworkManager.performRequest(AuthRequest.login(model: params))
     }
-    
-    static func signupWith(params: SignupParams) -> Future<SignupModel, RequestError> {
-        NetworkManager.performRequest(NewsRequest.signup(model: params))
-    }
-    
-    static func getUserDetailsWith(id: Int) -> Future<UserDetailModel, RequestError> {
-        NetworkManager.performRequest(NewsRequest.userDetail(id: id))
-    }
 }
 ```
 
-## Chain your multiple services into single service becomes super easy.
+# Service Chaining 
+Chain your multiple `Services` into single service becomes super easy by using `NetworkInterface`
 
 ```swift
 let service1 = UserService.getUserDetails()
@@ -114,3 +82,6 @@ services.sink { state in
     // do your stuff with the response here.
 }.store(in: &cancellables)
 ```
+
+# Example App 
+Checkout the sample code from [Example App](https://github.com/irshad281/ExampleApp)
