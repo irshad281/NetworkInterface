@@ -28,8 +28,6 @@ public extension NetworkInterface {
     
     static func decodeData<Element: Decodable>(responseData: Data?, error: Error?) -> Result<Element, RequestError>{
         if let data = responseData {
-            if NetworkInterface.logsEnabled { NetworkInterface.logResponse(from: data) }
-            
             do {
                 let result = try JSONDecoder.dateDecoder.decode(Element.self, from: data)
                 return .success(result)

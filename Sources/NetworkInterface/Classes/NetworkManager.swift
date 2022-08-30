@@ -29,7 +29,7 @@ import Combine
 public extension NetworkInterface {
     
     /// This method is to make your serve call from Request and return a `Decodable Element`.
-    public static func performRequest<Element: Decodable>(_ request: Request)
+    static func performRequest<Element: Decodable>(_ request: Request)
     -> Future<Element, RequestError>
     {
         Future<Element, RequestError> { promise in
@@ -40,7 +40,9 @@ public extension NetworkInterface {
             URLSession.shared.dataTask(with: httpRequest) { responseData, headerResponse, error in
                 if let response = headerResponse as? HTTPURLResponse {
                     let statusCode = response.statusCode
-                    if NetworkInterface.logsEnabled { debugPrint("Status Code: \(statusCode)") }
+                    if NetworkInterface.logsEnabled, let data = responseData {
+                        NetworkInterface.logResponse(from: data, requet: request, statusCode: statusCode)
+                    }
                 }
                 DispatchQueue.main.async {
                     return promise(NetworkInterface.decodeData(responseData: responseData, error: error))
@@ -48,10 +50,18 @@ public extension NetworkInterface {
             }.resume()
         }
     }
-    
+}
+
+// MARK: - Logger
+
+extension NetworkInterface {
     /// Print the response from server
     /// - Parameter data: Response Data in `binary`
-    static func logResponse(from data: Data) {
+    /// - Parameter requet: Request
+    /// - Parameter statusCode: statusCode
+    static func logResponse(from data: Data, requet: Request, statusCode: Int) {
+        debugPrint("API ~~~>>>", requet.endPoint)
+        debugPrint("Status Code: \(statusCode)")
         if let json = try? JSON(data: data) {
             debugPrint(json)
         } else if let data = String(data: data, encoding: .utf8) {
