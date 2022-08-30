@@ -51,13 +51,9 @@ extension Request {
             urlString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         }
         guard let url = URL(string: urlString) else {
-            
             return nil
         }
-        if NetworkInterface.logsEnabled {
-            debugPrint("Request URL -> \(finalUrl)")
-        }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.httpBody = try? body()
