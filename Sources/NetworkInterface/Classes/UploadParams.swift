@@ -38,6 +38,8 @@ public struct UploadParams {
         self.fileName = fileName
         self.mimeType = mimeType
     }
+    
+    public static let boundary = "Boundary-\(UUID().uuidString)"
 }
 
 public enum UploadFieldType: String, CaseIterable {
@@ -49,7 +51,7 @@ public extension Collection where Iterator.Element == UploadParams {
     var requestBody: Data {
         var bodyData = Data()
         let lineBreak = "\r\n"
-        let boundary = "Boundary-\(UUID().uuidString)"
+        let boundary = UploadParams.boundary
         
         for param in self {
             switch param.type {
