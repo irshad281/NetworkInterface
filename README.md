@@ -83,5 +83,67 @@ services.sink { state in
 }.store(in: &cancellables)
 ```
 
+# Upload File Request
+Here is the structure of UploadParams. first you need to make your parameters using `UploadParams`.
+
+```swift
+public struct UploadParams {
+    let key: String
+    let value: Any
+    let type: UploadFieldType
+    var fileName: String?
+    var mimeType: String?
+}
+```
+`key` = key name in which you want to send data.
+
+`value` = it can be `String` or `Data` which you want to send.
+
+`type` = for normal parameter use `.text` and for file/image parameter user `.file`.
+
+if type is `.file` then you need to send `fileName` and `mimeType` too. 
+
+Here is an example
+
+```swift
+var params: [UploadParams] = [
+    UploadParams(key: "username", value: username, type: .text),
+    UploadParams(key: "image", value: imageData, type: .file, fileName: imageName, mimeType: "image/*")
+]
+````  
+
+Once your UploadParams are ready you need to create your Upload Request Like this.
+
+```swift
+import NetworkInterface
+
+enum UserRequest: Request {
+    case updateUserWithImage(params: [UploadParams])
+    
+    var method: HTTPMethod { .put }
+    
+    var baseURLString: String { App.baseUrl }
+    
+    var endPoint: String { "users" }
+    
+    func body() throws -> Data? {
+        switch self {
+        case .updateUserWithImage(let params):
+            return params.requestBody
+        }
+    }
+    
+    func headers() -> Headers {
+        switch self {
+        case .updateUserWithImage(let params):
+            let username = params.valueForKey(.username) as? String ?? ""
+            var headers = App.headers(username: username)
+            headers[.contentType] = "multipart/form-data; boundary=\(UploadParams.boundary)"
+            return headers
+        }
+    }
+}
+
+``` 
 # Example App 
 Checkout the sample code from [Example App](https://github.com/irshad281/ExampleApp)
