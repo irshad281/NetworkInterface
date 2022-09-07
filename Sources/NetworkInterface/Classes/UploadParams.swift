@@ -65,10 +65,9 @@ public extension Collection where Iterator.Element == UploadParams {
             case .file:
                 if let imageData = param.value as? Data {
                     let filename = param.fileName ?? "\(String(UUID().uuidString.prefix(8))).jpg"
-                    let paramName = "image"
                     let mime = param.mimeType ?? "image/*"
                     bodyData.append("--\(boundary + lineBreak)")
-                    bodyData.append("Content-Disposition:form-data; name=\"\(paramName)\"")
+                    bodyData.append("Content-Disposition:form-data; name=\"\(param.key)\"")
                     bodyData.append("; filename=\"\(filename)\"\(lineBreak)")
                     bodyData.append("Content-Type: \(mime + lineBreak + lineBreak)")
                     bodyData.append(imageData)
